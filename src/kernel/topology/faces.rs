@@ -1,6 +1,7 @@
 use std::collections::BTreeSet;
 
 use decorum::R64;
+use nalgebra::{TGeneral, Transform, Transform3};
 use parry2d_f64::{
     bounding_volume::AABB,
     query::{Ray as Ray2, RayCast as _},
@@ -8,7 +9,7 @@ use parry2d_f64::{
     utils::point_in_triangle::{corner_direction, Orientation},
 };
 use parry3d_f64::{
-    math::Isometry, query::Ray as Ray3, shape::Triangle as Triangle3,
+    query::Ray as Ray3, shape::Triangle as Triangle3,
 };
 
 use crate::{
@@ -26,7 +27,7 @@ pub struct Faces(pub Vec<Face>);
 impl Faces {
     /// Transform all the faces
     #[must_use]
-    pub fn transform(self, transform: &Isometry<f64>) -> Self {
+    pub fn transform(self, transform: &Transform3<f64>) -> Self {
         let faces = self
             .0
             .into_iter()
@@ -84,7 +85,7 @@ pub enum Face {
 impl Face {
     /// Transform the face
     #[must_use]
-    pub fn transform(self, transform: &Isometry<f64>) -> Self {
+    pub fn transform(self, transform: &Transform3<f64>) -> Self {
         match self {
             Self::Face { edges, surface } => Self::Face {
                 edges: edges.transform(transform),

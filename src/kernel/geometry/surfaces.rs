@@ -1,5 +1,4 @@
-use nalgebra::{point, vector};
-use parry3d_f64::math::Isometry;
+use nalgebra::{point, Transform3, vector};
 
 use crate::math::{Point, Vector};
 
@@ -22,7 +21,7 @@ impl Surface {
 
     /// Transform the surface
     #[must_use]
-    pub fn transform(self, transform: &Isometry<f64>) -> Self {
+    pub fn transform(self, transform: &Transform3<f64>) -> Self {
         match self {
             Self::Plane(plane) => Self::Plane(plane.transform(transform)),
         }
@@ -102,7 +101,7 @@ pub struct Plane {
 impl Plane {
     /// Transform the plane
     #[must_use]
-    pub fn transform(self, transform: &Isometry<f64>) -> Self {
+    pub fn transform(self, transform: &Transform3<f64>) -> Self {
         Self {
             origin: transform.transform_point(&self.origin),
             u: transform.transform_vector(&self.u),
@@ -201,10 +200,9 @@ impl approx::RelativeEq for Plane {
 #[cfg(test)]
 mod tests {
     use std::f64::consts::FRAC_PI_2;
-
     use approx::assert_relative_eq;
-    use nalgebra::{point, vector, UnitQuaternion};
-    use parry3d_f64::math::{Isometry, Translation};
+    use nalgebra::{point, vector, UnitQuaternion, Transform3, Translation, Isometry3, Matrix4, Transform};
+
 
     use crate::math::Vector;
 
@@ -218,10 +216,17 @@ mod tests {
             v: vector![0., 1., 0.],
         };
 
-        let plane = plane.transform(&Isometry::from_parts(
-            Translation::from([2., 4., 6.]),
-            UnitQuaternion::from_axis_angle(&Vector::z_axis(), FRAC_PI_2),
-        ));
+        let trn = Translation::from([2., 4., 6.]);
+
+        let rot = UnitQuaternion::from_axis_angle(&Vector::z_axis(), FRAC_PI_2);
+
+        let iso = Isometry3::from_parts(trn, rot);
+
+        let mat: Matrix4<f64> = iso.to_matrix();
+
+        let transformation: Transform3<f64> =  Transform::from_matrix_unchecked(mat);
+
+        let plane = plane.transform(&transformation);
 
         assert_relative_eq!(
             plane,

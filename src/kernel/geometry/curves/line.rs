@@ -1,5 +1,6 @@
 use approx::AbsDiffEq;
-use parry3d_f64::math::Isometry;
+use nalgebra::{Transform3};
+
 
 use crate::math::Point;
 
@@ -20,7 +21,7 @@ pub struct Line {
 impl Line {
     /// Transform the line
     #[must_use]
-    pub fn transform(self, transform: &Isometry<f64>) -> Self {
+    pub fn transform(self, transform: &Transform3<f64>) -> Self {
         Self {
             a: transform.transform_point(&self.a),
             b: transform.transform_point(&self.b),
@@ -46,13 +47,10 @@ mod tests {
     use std::f64::consts::FRAC_PI_2;
 
     use approx::assert_abs_diff_eq;
-    use nalgebra::{point, UnitQuaternion};
-    use parry3d_f64::math::{Isometry, Translation};
+    use nalgebra::{  Isometry3, point, Transform, Transform3, Translation3, UnitQuaternion, Vector3, Matrix4};
 
-    use crate::math::Vector;
 
     use super::Line;
-
     #[test]
     fn test_transform() {
         let line = Line {
@@ -60,10 +58,17 @@ mod tests {
             b: point![1., 1., 0.],
         };
 
-        let line = line.transform(&Isometry::from_parts(
-            Translation::from([1., 2., 3.]),
-            UnitQuaternion::from_axis_angle(&Vector::z_axis(), FRAC_PI_2),
-        ));
+        let trn = Translation3::from([1., 2., 3.]);
+
+        let rot = UnitQuaternion::from_axis_angle(&Vector3::z_axis(), FRAC_PI_2);
+
+        let iso = Isometry3::from_parts(trn, rot);
+
+        let mat: Matrix4<f64> = iso.to_matrix();
+
+        let transformation: Transform3<f64> =  Transform::from_matrix_unchecked(mat);
+
+        let line = line.transform(&transformation);
 
         assert_abs_diff_eq!(
             line,

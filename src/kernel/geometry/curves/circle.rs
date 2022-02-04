@@ -1,7 +1,6 @@
 use std::f64::consts::PI;
 
-use nalgebra::vector;
-use parry3d_f64::math::Isometry;
+use nalgebra::{Transform3, vector};
 
 use crate::math::{Point, Vector};
 
@@ -21,7 +20,7 @@ pub struct Circle {
 
 impl Circle {
     #[must_use]
-    pub fn transform(self, transform: &Isometry<f64>) -> Self {
+    pub fn transform(self, transform: &Transform3<f64>) -> Self {
         Self {
             center: transform.transform_point(&self.center),
             radius: transform.transform_vector(&self.radius),

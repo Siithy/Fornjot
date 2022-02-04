@@ -1,7 +1,7 @@
 use std::f64::consts::PI;
 
-use nalgebra::vector;
-use parry3d_f64::{bounding_volume::AABB, math::Isometry};
+use nalgebra::{Isometry3,Transform3, vector};
+use parry3d_f64::{bounding_volume::AABB};
 
 use crate::{
     debug::DebugInfo,
@@ -27,13 +27,13 @@ impl Shape for fj::Sweep {
 
         let bottom_faces = original_faces
             .clone()
-            .transform(&Isometry::rotation(vector![PI, 0., 0.]));
+            .transform(&Transform3::<f64>::from_matrix_unchecked(Isometry3::<f64>::rotation(vector![PI, 0., 0.]).to_matrix()));
 
-        let top_faces = original_faces.transform(&Isometry::translation(
+        let top_faces = original_faces.transform(&Transform3::<f64>::from_matrix_unchecked(Isometry3::translation(
             0.0,
             0.0,
             self.length,
-        ));
+        ).to_matrix()));
 
         // This will only work correctly, if the original shape consists of one
         // edge. If there are more, this will create some kind of weird face
@@ -48,7 +48,7 @@ impl Shape for fj::Sweep {
         for segment in segments {
             let [v0, v1] = [segment.a, segment.b];
             let [v3, v2] = {
-                let segment = segment.transformed(&Isometry::translation(
+                let segment = segment.transformed(&Isometry3::translation(
                     0.0,
                     0.0,
                     self.length,

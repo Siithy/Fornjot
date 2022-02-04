@@ -1,6 +1,6 @@
-use nalgebra::vector;
+use nalgebra::{Transform3, vector};
 use parry2d_f64::shape::Segment as Segment2;
-use parry3d_f64::{math::Isometry, shape::Segment as Segment3};
+use parry3d_f64::{ shape::Segment as Segment3};
 
 use crate::{
     kernel::geometry::{Circle, Curve, Surface},
@@ -32,7 +32,7 @@ impl Edges {
 
     /// Transform the edges
     #[must_use]
-    pub fn transform(mut self, transform: &Isometry<f64>) -> Self {
+    pub fn transform(mut self, transform: &Transform3<f64>) -> Self {
         for cycle in &mut self.cycles {
             for edge in &mut cycle.edges {
                 edge.curve = edge.curve.transform(transform);

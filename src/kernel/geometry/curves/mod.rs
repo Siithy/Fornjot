@@ -1,7 +1,7 @@
 mod circle;
 mod line;
 
-use parry3d_f64::math::Isometry;
+use nalgebra::Transform3;
 
 pub use self::{circle::Circle, line::Line};
 
@@ -30,7 +30,7 @@ pub enum Curve {
 
 impl Curve {
     #[must_use]
-    pub fn transform(self, transform: &Isometry<f64>) -> Self {
+    pub fn transform(self, transform: &Transform3<f64>) -> Self {
         match self {
             Self::Circle(circle) => Self::Circle(circle.transform(transform)),
             Self::Line(line) => Self::Line(line.transform(transform)),
