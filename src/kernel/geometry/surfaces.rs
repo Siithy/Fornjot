@@ -1,4 +1,4 @@
-use nalgebra::{point, Transform3, vector};
+use nalgebra::{point, vector, Transform3};
 
 use crate::math::{Point, Vector};
 
@@ -199,10 +199,12 @@ impl approx::RelativeEq for Plane {
 
 #[cfg(test)]
 mod tests {
-    use std::f64::consts::FRAC_PI_2;
     use approx::assert_relative_eq;
-    use nalgebra::{point, vector, UnitQuaternion, Transform3, Translation, Isometry3, Matrix4, Transform};
-
+    use nalgebra::{
+        point, vector, Isometry3, Matrix4, Transform, Transform3, Translation,
+        UnitQuaternion,
+    };
+    use std::f64::consts::FRAC_PI_2;
 
     use crate::math::Vector;
 
@@ -224,7 +226,8 @@ mod tests {
 
         let mat: Matrix4<f64> = iso.to_matrix();
 
-        let transformation: Transform3<f64> =  Transform::from_matrix_unchecked(mat);
+        let transformation: Transform3<f64> =
+            Transform::from_matrix_unchecked(mat);
 
         let plane = plane.transform(&transformation);
 

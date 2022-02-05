@@ -12,11 +12,10 @@ where
 {
     fn rotate(&self, axis: [f64; 3], angle: f64) -> crate::Transform {
         let shape = self.clone().into();
+        let matrix: Transform3<f64> = Transform3::from_matrix_unchecked(UnitQuaternion::from_axis_angle(axis, angle).to_homogeneous());
         crate::Transform {
             shape,
-            axis,
-            angle,
-            offset: [0.; 3],
+            matrix,
         }
     }
 }
@@ -82,11 +81,10 @@ where
 {
     fn translate(&self, offset: [f64; 3]) -> crate::Transform {
         let shape = self.clone().into();
+        let matrix: Transform3<f64> = Transform3::from_matrix_unchecked(Translation::from(offset).to_homogeneous());
         crate::Transform {
             shape,
-            axis: [1., 0., 0.],
-            angle: 0.,
-            offset,
+            matrix,
         }
     }
 }

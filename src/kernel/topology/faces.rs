@@ -1,3 +1,4 @@
+use std::borrow::Borrow;
 use std::collections::BTreeSet;
 
 use decorum::R64;
@@ -8,9 +9,8 @@ use parry2d_f64::{
     shape::Triangle as Triangle2,
     utils::point_in_triangle::{corner_direction, Orientation},
 };
-use parry3d_f64::{
-    query::Ray as Ray3, shape::Triangle as Triangle3,
-};
+use parry3d_f64::query::Ray as Ray3;
+use parry3d_f64::shape::Triangle;
 
 use crate::{
     debug::{DebugInfo, TriangleEdgeCheck},
@@ -40,7 +40,7 @@ impl Faces {
     pub fn triangles(
         &self,
         tolerance: f64,
-        out: &mut Vec<Triangle3>,
+        out: &mut Vec<Triangle>,
         debug_info: &mut DebugInfo,
     ) {
         for face in &self.0 {
@@ -79,7 +79,7 @@ pub enum Face {
     /// The plan is to eventually represent faces as a geometric surface,
     /// bounded by edges. While the transition is being made, this variant is
     /// still required.
-    Triangles(Vec<Triangle3>),
+    Triangles(Vec<Triangle>),
 }
 
 impl Face {
@@ -93,7 +93,11 @@ impl Face {
             },
             Self::Triangles(mut triangles) => {
                 for triangle in &mut triangles {
-                    *triangle = triangle.transformed(transform);
+                    *triangle = Triangle::new(
+                        transform.transform_point(triangle.a.borrow()),
+                        transform.transform_point(triangle.b.borrow()),
+                        transform.transform_point(triangle.c.borrow()),
+                    )
                 }
 
                 Self::Triangles(triangles)
@@ -104,7 +108,7 @@ impl Face {
     pub fn triangles(
         &self,
         tolerance: f64,
-        out: &mut Vec<Triangle3>,
+        out: &mut Vec<Triangle>,
         debug_info: &mut DebugInfo,
     ) {
         match self {
@@ -219,7 +223,7 @@ impl Face {
                         let b = surface.point_surface_to_model(b);
                         let c = surface.point_surface_to_model(c);
 
-                        Triangle3 { a, b, c }
+                        Triangle { a, b, c }
                     },
                 ));
             }

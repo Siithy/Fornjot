@@ -1,6 +1,6 @@
-use nalgebra::{Transform3, vector};
+use nalgebra::{vector, Transform3};
 use parry2d_f64::shape::Segment as Segment2;
-use parry3d_f64::{ shape::Segment as Segment3};
+use parry3d_f64::shape::Segment as Segment3;
 
 use crate::{
     kernel::geometry::{Circle, Curve, Surface},

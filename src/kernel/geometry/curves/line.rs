@@ -1,6 +1,5 @@
 use approx::AbsDiffEq;
-use nalgebra::{Transform3};
-
+use nalgebra::Transform3;
 
 use crate::math::Point;
 
@@ -47,8 +46,10 @@ mod tests {
     use std::f64::consts::FRAC_PI_2;
 
     use approx::assert_abs_diff_eq;
-    use nalgebra::{  Isometry3, point, Transform, Transform3, Translation3, UnitQuaternion, Vector3, Matrix4};
-
+    use nalgebra::{
+        point, Isometry3, Matrix4, Transform, Transform3, Translation3,
+        UnitQuaternion, Vector3,
+    };
 
     use super::Line;
     #[test]
@@ -60,13 +61,13 @@ mod tests {
 
         let trn = Translation3::from([1., 2., 3.]);
 
-        let rot = UnitQuaternion::from_axis_angle(&Vector3::z_axis(), FRAC_PI_2);
+        let rot =
+            UnitQuaternion::from_axis_angle(&Vector3::z_axis(), FRAC_PI_2);
 
-        let iso = Isometry3::from_parts(trn, rot);
 
-        let mat: Matrix4<f64> = iso.to_matrix();
-
-        let transformation: Transform3<f64> =  Transform::from_matrix_unchecked(mat);
+        let transformation: Transform3<f64> =
+            Transform::from_matrix_unchecked(Isometry3::<f64>::from_parts(
+                trn, rot).to_matrix());
 
         let line = line.transform(&transformation);
 

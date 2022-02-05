@@ -66,17 +66,11 @@ impl From<Difference> for Shape3d {
 #[derive(Clone, Debug)]
 #[repr(C)]
 pub struct Transform {
-    /// The shape being rotated
+    /// The shape being trasnformed
     pub shape: Shape3d,
+    /// 4x4 homogenous matrix stored in Transform3 format
+    pub matrix: Transform3,
 
-    /// The axis of the rotation
-    pub axis: [f64; 3],
-
-    /// The angle of the rotation
-    pub angle: f64,
-
-    /// The offset of the translation
-    pub offset: [f64; 3],
 }
 
 impl From<Transform> for Shape {

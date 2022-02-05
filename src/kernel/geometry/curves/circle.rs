@@ -1,6 +1,6 @@
 use std::f64::consts::PI;
 
-use nalgebra::{Transform3, vector};
+use nalgebra::{vector, Transform3};
 
 use crate::math::{Point, Vector};
 
